@@ -18,6 +18,27 @@
       }
     },
 
+    "IncomingSqsPolicy": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Id": "IncomingSqsPolicy",
+          "Statement": [
+            {
+              "Sid": "Allow-Queues-From-S3",
+              "Effect": "Allow",
+              "Principal": { "Service": "s3.amazonaws.com" },
+              "Action": [ "SQS:SendMessage" ],
+              "Resource": "*"
+            }
+          ]
+        },
+        "Queues": [
+          { "Ref": "IncomingSqs" }
+        ]
+      }
+    },
+
     "CreatedTopic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
