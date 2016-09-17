@@ -1,0 +1,109 @@
+{
+  "AWSTemplateFormatVersion":"2010-09-09",
+  "Description":"Bucket holding movie data",
+
+  "Parameters": {
+    "BucketName": {
+      "Description": "The bucket for storing the posters",
+      "Type": "String"
+    }
+  },
+
+  "Resources": {
+    "IncomingSqs": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "DelaySeconds": 0,
+        "VisibilityTimeout": "600"
+      }
+    },
+
+    "CreatedTopic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "DataCreatedTopic"
+      }
+    },
+
+    "RemovedTopic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "DataRemovedTopic"
+      }
+    },
+
+    "Bucket": {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl" : "Private",
+        "BucketName" : { "Ref": "BucketName" },
+        "NotificationConfiguration": {
+          "QueueConfigurations": [
+            {
+              "Queue": { "Fn::GetAtt": [ "IncomingSqs", "Arn"] },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    {
+                      "Name": "prefix",
+                      "Value": "incoming"
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "TopicConfigurations": [
+            {
+              "Topic": { "Ref": "CreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    {
+                      "Name": "prefix",
+                      "Value": "processed"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "RemovedTopic" },
+              "Event": "s3:ObjectRemoved:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    {
+                      "Name": "prefix",
+                      "Value": "processed"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "Bucket": {
+      "Value": { "Ref": "Bucket" }
+    },
+
+    "IncomingSqsArn": {
+      "Value": { "Fn::GetAtt": [ "IncomingSqs", "Arn" ] }
+    },
+
+    "CreatedTopic": {
+      "Value": { "Ref": "CreatedTopic" }
+    },
+
+    "RemovedTopic": {
+      "Value": { "Ref": "RemovedTopic" }
+    }
+  }
+}
