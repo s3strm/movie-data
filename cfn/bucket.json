@@ -10,25 +10,37 @@
   },
 
   "Resources": {
-    "IncomingSqs": {
-      "Type": "AWS::SQS::Queue",
+    "S3TopicPolicy": {
+      "Type": "AWS::SNS::TopicPolicy",
       "Properties": {
-        "DelaySeconds": 0,
-        "VisibilityTimeout": "600"
+        "PolicyDocument": {
+          "Id": "S3TopicPolicy",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": "s3.amazonaws.com" },
+              "Action": [ "SNS:Publish" ],
+              "Resource": "*"
+            }
+          ]
+        },
+        "Topics": [
+          { "Ref": "CreatedTopic" },
+          { "Ref": "RemovedTopic" }
+        ]
       }
     },
 
-    "IncomingSqsPolicy": {
+    "S3SqsPolicy": {
       "Type": "AWS::SQS::QueuePolicy",
       "Properties": {
         "PolicyDocument": {
-          "Id": "IncomingSqsPolicy",
+          "Id": "S3SqsPolicy",
           "Statement": [
             {
-              "Sid": "Allow-Queues-From-S3",
               "Effect": "Allow",
               "Principal": { "Service": "s3.amazonaws.com" },
-              "Action": [ "SQS:SendMessage" ],
+              "Action": [ "SQS:SendMessage", "SNS:Publish" ],
               "Resource": "*"
             }
           ]
@@ -36,6 +48,14 @@
         "Queues": [
           { "Ref": "IncomingSqs" }
         ]
+      }
+    },
+
+    "IncomingSqs": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "DelaySeconds": 0,
+        "VisibilityTimeout": "600"
       }
     },
 
@@ -66,10 +86,7 @@
               "Filter": {
                 "S3Key": {
                   "Rules" : [
-                    {
-                      "Name": "prefix",
-                      "Value": "incoming"
-                    }
+                    { "Name": "prefix", "Value": "incoming/" }
                   ]
                 }
               }
@@ -82,10 +99,7 @@
               "Filter": {
                 "S3Key": {
                   "Rules" : [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed"
-                    }
+                    { "Name": "prefix", "Value": "processed" }
                   ]
                 }
               }
@@ -96,17 +110,15 @@
               "Filter": {
                 "S3Key": {
                   "Rules" : [
-                    {
-                      "Name": "prefix",
-                      "Value": "processed"
-                    }
+                    { "Name": "prefix", "Value": "processed/" }
                   ]
                 }
               }
             }
           ]
         }
-      }
+      },
+      "DependsOn": [ "S3TopicPolicy", "S3SqsPolicy" ]
     }
   },
 
