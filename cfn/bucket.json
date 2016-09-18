@@ -3,8 +3,13 @@
   "Description":"Bucket holding movie data",
 
   "Parameters": {
-    "BucketName": {
-      "Description": "The bucket for storing the posters",
+    "MovieBucketName": {
+      "Description": "Bucket to store the processed movies",
+      "Type": "String"
+    },
+
+    "IncomingBucketName": {
+      "Description": "Bucket to store the unprocessed movies",
       "Type": "String"
     }
   },
@@ -25,37 +30,16 @@
           ]
         },
         "Topics": [
-          { "Ref": "CreatedTopic" },
-          { "Ref": "RemovedTopic" }
+          { "Ref": "IncomingMp4Topic" },
+          { "Ref": "CreatedTopic" }
         ]
       }
     },
 
-    "S3SqsPolicy": {
-      "Type": "AWS::SQS::QueuePolicy",
-      "Properties": {
-        "PolicyDocument": {
-          "Id": "S3SqsPolicy",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": { "Service": "s3.amazonaws.com" },
-              "Action": [ "SQS:SendMessage", "SNS:Publish" ],
-              "Resource": "*"
-            }
-          ]
-        },
-        "Queues": [
-          { "Ref": "IncomingSqs" }
-        ]
-      }
-    },
-
-    "IncomingSqs": {
-      "Type": "AWS::SQS::Queue",
-      "Properties": {
-        "DelaySeconds": 0,
-        "VisibilityTimeout": "600"
+    "IncomingMp4Topic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "DataIncomingMp4Topic"
       }
     },
 
@@ -66,51 +50,20 @@
       }
     },
 
-    "RemovedTopic": {
-      "Type" : "AWS::SNS::Topic",
-      "Properties" : {
-        "DisplayName" : "DataRemovedTopic"
-      }
-    },
-
-    "Bucket": {
+    "IncomingBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
         "AccessControl" : "Private",
-        "BucketName" : { "Ref": "BucketName" },
+        "BucketName" : { "Ref": "IncomingBucketName" },
         "NotificationConfiguration": {
-          "QueueConfigurations": [
-            {
-              "Queue": { "Fn::GetAtt": [ "IncomingSqs", "Arn"] },
-              "Event": "s3:ObjectCreated:*",
-              "Filter": {
-                "S3Key": {
-                  "Rules" : [
-                    { "Name": "prefix", "Value": "incoming/" }
-                  ]
-                }
-              }
-            }
-          ],
           "TopicConfigurations": [
             {
-              "Topic": { "Ref": "CreatedTopic" },
+              "Topic": { "Ref": "IncomingMp4Topic" },
               "Event": "s3:ObjectCreated:*",
               "Filter": {
                 "S3Key": {
                   "Rules" : [
-                    { "Name": "prefix", "Value": "processed" }
-                  ]
-                }
-              }
-            },
-            {
-              "Topic": { "Ref": "RemovedTopic" },
-              "Event": "s3:ObjectRemoved:*",
-              "Filter": {
-                "S3Key": {
-                  "Rules" : [
-                    { "Name": "prefix", "Value": "processed/" }
+                    { "Name": "suffix", "Value": ".mp4" }
                   ]
                 }
               }
@@ -118,25 +71,49 @@
           ]
         }
       },
-      "DependsOn": [ "S3TopicPolicy", "S3SqsPolicy" ]
+      "DependsOn": [ "S3TopicPolicy" ]
+    },
+
+    "MovieBucket": {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl" : "Private",
+        "BucketName" : { "Ref": "MovieBucketName" },
+        "NotificationConfiguration": {
+          "TopicConfigurations": [
+            {
+              "Topic": { "Ref": "CreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/video.mp4" }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "DependsOn": [ "S3TopicPolicy" ]
     }
   },
 
   "Outputs": {
-    "Bucket": {
-      "Value": { "Ref": "Bucket" }
+    "MovieBucket": {
+      "Value": { "Ref": "MovieBucketName" }
     },
 
-    "IncomingSqsArn": {
-      "Value": { "Fn::GetAtt": [ "IncomingSqs", "Arn" ] }
+    "IncomingBucket": {
+      "Value": { "Ref": "IncomingBucketName" }
+    },
+
+    "IncomingMp4Topic": {
+      "Value": { "Ref": "IncomingMp4Topic" }
     },
 
     "CreatedTopic": {
       "Value": { "Ref": "CreatedTopic" }
-    },
-
-    "RemovedTopic": {
-      "Value": { "Ref": "RemovedTopic" }
     }
   }
 }
