@@ -11,6 +11,11 @@
     "IncomingBucketName": {
       "Description": "Bucket to store the unprocessed movies",
       "Type": "String"
+    },
+
+    "PostersLambdaArn": {
+      "Description": "Bucket to store the unprocessed movies",
+      "Type": "String"
     }
   },
 
@@ -46,7 +51,13 @@
     "CreatedTopic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
-        "DisplayName" : "DataCreatedTopic"
+        "DisplayName" : "DataCreatedTopic",
+        "Subscription": [
+          {
+            "Endpoint": { "Ref": "PostersLambdaArn" },
+            "Protocol": "lambda"
+          }
+        ]
       }
     },
 
