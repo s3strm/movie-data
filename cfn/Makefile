@@ -1,9 +1,9 @@
-AWS_DEFAULT_REGION := $(shell ./bin/get_setting AWS_DEFAULT_REGION)
-STACK_NAME := $(shell ./bin/get_setting STACK_NAME)
+AWS_DEFAULT_REGION := $(shell ../bin/get_setting AWS_DEFAULT_REGION)
+STACK_NAME := $(shell ../bin/get_setting STACK_NAME)
 TEMPLATE = file://./cfn.json
 
-MOVIE_BUCKET = $(shell ./bin/get_setting MOVIE_BUCKET)
-INCOMING_BUCKET = $(shell ./bin/get_setting INCOMING_BUCKET)
+MOVIE_BUCKET = $(shell ../bin/get_setting MOVIE_BUCKET)
+INCOMING_BUCKET = $(shell ../bin/get_setting INCOMING_BUCKET)
 
 PARAMETERS  = "ParameterKey=MovieBucketName,ParameterValue=$(MOVIE_BUCKET)"
 PARAMETERS += "ParameterKey=IncomingBucketName,ParameterValue=$(INCOMING_BUCKET)"
