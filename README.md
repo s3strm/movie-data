@@ -2,6 +2,9 @@
 
 The bucket holding the movie data
 
+## Deps
+
+s3strm/posters
 
 ## Workflow
 
