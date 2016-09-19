@@ -21,6 +21,11 @@
     "StrmLambdaArn": {
       "Description": "The strm lambda function to subscribe to events",
       "Type": "String"
+    },
+
+    "OmdbLambdaArn": {
+      "Description": "The strm lambda function to subscribe to events",
+      "Type": "String"
     }
   },
 
@@ -64,6 +69,10 @@
           },
           {
             "Endpoint": { "Ref": "StrmLambdaArn" },
+            "Protocol": "lambda"
+          },
+          {
+            "Endpoint": { "Ref": "OmdbLambdaArn" },
             "Protocol": "lambda"
           }
         ]
