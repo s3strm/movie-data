@@ -14,7 +14,12 @@
     },
 
     "PostersLambdaArn": {
-      "Description": "Bucket to store the unprocessed movies",
+      "Description": "The posters lambda function to subscribe to events",
+      "Type": "String"
+    },
+
+    "StrmLambdaArn": {
+      "Description": "The strm lambda function to subscribe to events",
       "Type": "String"
     }
   },
@@ -55,6 +60,10 @@
         "Subscription": [
           {
             "Endpoint": { "Ref": "PostersLambdaArn" },
+            "Protocol": "lambda"
+          },
+          {
+            "Endpoint": { "Ref": "StrmLambdaArn" },
             "Protocol": "lambda"
           }
         ]
