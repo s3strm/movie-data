@@ -45,12 +45,13 @@
           ]
         },
         "Topics": [
-          { "Ref": "CreatedTopic" }
+          { "Ref": "Mp4CreatedTopic" },
+          { "Ref": "MetaCreatedTopic" }
         ]
       }
     },
 
-    "Mp4Topic": {
+    "Mp4CreatedTopic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
         "DisplayName" : "Mp4CreatedTopic",
@@ -72,6 +73,14 @@
             "Protocol": "lambda"
           }
         ]
+      }
+    },
+
+    "MetaCreatedTopic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "MetaCreatedTopic",
+        "Subscription": []
       }
     },
 
