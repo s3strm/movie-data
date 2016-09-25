@@ -112,6 +112,28 @@
                   ]
                 }
               }
+            },
+            {
+              "Topic": { "Ref": "Mp4CreatedTopic" },
+              "Event": "s3:ObjectUpdated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/video.mp4" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "MetaCreatedTopic" },
+              "Event": "s3:ObjectUpdated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/metadata.txt" }
+                  ]
+                }
+              }
             }
           ]
         }
