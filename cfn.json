@@ -8,11 +8,6 @@
       "Type": "String"
     },
 
-    "IncomingBucketName": {
-      "Description": "Bucket to store the unprocessed movies",
-      "Type": "String"
-    },
-
     "PostersLambdaArn": {
       "Description": "The posters lambda function to subscribe to events",
       "Type": "String"
@@ -25,6 +20,11 @@
 
     "OmdbLambdaArn": {
       "Description": "The strm lambda function to subscribe to events",
+      "Type": "String"
+    },
+
+    "Mp4MetaKickstarterLambdaArn": {
+      "Description": "The Mp4Meta Kickstarter lambda function to subscribe to events",
       "Type": "String"
     }
   },
@@ -45,23 +45,15 @@
           ]
         },
         "Topics": [
-          { "Ref": "IncomingMp4Topic" },
           { "Ref": "CreatedTopic" }
         ]
       }
     },
 
-    "IncomingMp4Topic": {
+    "Mp4Topic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
-        "DisplayName" : "DataIncomingMp4Topic"
-      }
-    },
-
-    "CreatedTopic": {
-      "Type" : "AWS::SNS::Topic",
-      "Properties" : {
-        "DisplayName" : "DataCreatedTopic",
+        "DisplayName" : "Mp4CreatedTopic",
         "Subscription": [
           {
             "Endpoint": { "Ref": "PostersLambdaArn" },
@@ -74,33 +66,13 @@
           {
             "Endpoint": { "Ref": "OmdbLambdaArn" },
             "Protocol": "lambda"
+          },
+          {
+            "Endpoint": { "Ref": "Mp4MetaKickstarterLambdaArn" },
+            "Protocol": "lambda"
           }
         ]
       }
-    },
-
-    "IncomingBucket": {
-      "Type" : "AWS::S3::Bucket",
-      "Properties" : {
-        "AccessControl" : "Private",
-        "BucketName" : { "Ref": "IncomingBucketName" },
-        "NotificationConfiguration": {
-          "TopicConfigurations": [
-            {
-              "Topic": { "Ref": "IncomingMp4Topic" },
-              "Event": "s3:ObjectCreated:*",
-              "Filter": {
-                "S3Key": {
-                  "Rules" : [
-                    { "Name": "suffix", "Value": ".mp4" }
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      },
-      "DependsOn": [ "S3TopicPolicy" ]
     },
 
     "MovieBucket": {
@@ -111,12 +83,23 @@
         "NotificationConfiguration": {
           "TopicConfigurations": [
             {
-              "Topic": { "Ref": "CreatedTopic" },
+              "Topic": { "Ref": "Mp4CreatedTopic" },
               "Event": "s3:ObjectCreated:*",
               "Filter": {
                 "S3Key": {
                   "Rules" : [
                     { "Name": "suffix", "Value": "/video.mp4" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "MetaCreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/metadata.txt" }
                   ]
                 }
               }
@@ -133,16 +116,12 @@
       "Value": { "Ref": "MovieBucketName" }
     },
 
-    "IncomingBucket": {
-      "Value": { "Ref": "IncomingBucketName" }
+    "Mp4CreatedTopic": {
+      "Value": { "Ref": "Mp4CreatedTopic" }
     },
 
-    "IncomingMp4Topic": {
-      "Value": { "Ref": "IncomingMp4Topic" }
-    },
-
-    "CreatedTopic": {
-      "Value": { "Ref": "CreatedTopic" }
+    "MetaCreatedTopic": {
+      "Value": { "Ref": "MetaCreatedTopic" }
     }
   }
 }
