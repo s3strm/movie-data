@@ -6,16 +6,19 @@ MOVIE_BUCKET := $(shell ./bin/get_setting MOVIE_BUCKET)
 MOVIE_POSTER_STACK_NAME := $(shell ./bin/get_setting MOVIE_POSTER_STACK_NAME)
 MOVIE_STACK_NAME := $(shell ./bin/get_setting MOVIE_STACK_NAME)
 MOVIE_STRM_STACK_NAME := $(shell ./bin/get_setting MOVIE_STRM_STACK_NAME)
+MOVIE_NFO_STACK_NAME := $(shell ./bin/get_setting MOVIE_NFO_STACK_NAME)
 MOVIE_OMDB_STACK_NAME := $(shell ./bin/get_setting MOVIE_OMDB_STACK_NAME)
 MP4META_KICKSTARTER_STACK_NAME := $(shell ./bin/get_setting MOVIE_MP4META_STACK_NAME)-kickstarter
 POSTERS_LAMBDA := $(shell ./bin/get_stack_output $(MOVIE_POSTER_STACK_NAME) LambdaArn)
 STRM_LAMBDA := $(shell ./bin/get_stack_output $(MOVIE_STRM_STACK_NAME) LambdaArn)
+NFO_LAMBDA := $(shell ./bin/get_stack_output $(MOVIE_NFO_STACK_NAME) LambdaArn)
 OMDB_LAMBDA := $(shell ./bin/get_stack_output $(MOVIE_OMDB_STACK_NAME) LambdaArn)
 MP4META_KICKSTARTER_LAMBDA := $(shell ./bin/get_stack_output $(MP4META_KICKSTARTER_STACK_NAME) LambdaArn)
 
 PARAMETERS  = "ParameterKey=MovieBucketName,ParameterValue=$(MOVIE_BUCKET)"
 PARAMETERS += "ParameterKey=PostersLambdaArn,ParameterValue=$(POSTERS_LAMBDA)"
 PARAMETERS += "ParameterKey=StrmLambdaArn,ParameterValue=$(STRM_LAMBDA)"
+PARAMETERS += "ParameterKey=NfoLambdaArn,ParameterValue=$(NFO_LAMBDA)"
 PARAMETERS += "ParameterKey=OmdbLambdaArn,ParameterValue=$(OMDB_LAMBDA)"
 PARAMETERS += "ParameterKey=Mp4MetaKickstarterLambdaArn,ParameterValue=$(MP4META_KICKSTARTER_LAMBDA)"
 

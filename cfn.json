@@ -18,6 +18,11 @@
       "Type": "String"
     },
 
+    "NfoLambdaArn": {
+      "Description": "The nfo lambda function to subscribe to events",
+      "Type": "String"
+    },
+
     "OmdbLambdaArn": {
       "Description": "The strm lambda function to subscribe to events",
       "Type": "String"
@@ -80,7 +85,12 @@
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
         "DisplayName" : "MetaCreatedTopic",
-        "Subscription": []
+        "Subscription": [
+          {
+            "Endpoint": { "Ref": "NfoLambdaArn" },
+            "Protocol": "lambda"
+          }
+        ]
       }
     },
 
