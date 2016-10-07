@@ -123,7 +123,8 @@
 
   "Outputs": {
     "MovieBucket": {
-      "Value": { "Ref": "MovieBucketName" }
+      "Value": { "Ref": "MovieBucketName" },
+      "Export": { "Name": "s3strm-movies-bucket" }
     },
 
     "Mp4CreatedTopic": {
