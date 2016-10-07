@@ -26,11 +26,6 @@
     "OmdbLambdaArn": {
       "Description": "The strm lambda function to subscribe to events",
       "Type": "String"
-    },
-
-    "Mp4MetaKickstarterLambdaArn": {
-      "Description": "The Mp4Meta Kickstarter lambda function to subscribe to events",
-      "Type": "String"
     }
   },
 
@@ -71,10 +66,6 @@
           },
           {
             "Endpoint": { "Ref": "OmdbLambdaArn" },
-            "Protocol": "lambda"
-          },
-          {
-            "Endpoint": { "Ref": "Mp4MetaKickstarterLambdaArn" },
             "Protocol": "lambda"
           }
         ]
