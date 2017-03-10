@@ -6,26 +6,6 @@
     "MovieBucketName": {
       "Description": "Bucket to store the processed movies",
       "Type": "String"
-    },
-
-    "PostersLambdaArn": {
-      "Description": "The posters lambda function to subscribe to events",
-      "Type": "String"
-    },
-
-    "StrmLambdaArn": {
-      "Description": "The strm lambda function to subscribe to events",
-      "Type": "String"
-    },
-
-    "NfoLambdaArn": {
-      "Description": "The nfo lambda function to subscribe to events",
-      "Type": "String"
-    },
-
-    "OmdbLambdaArn": {
-      "Description": "The strm lambda function to subscribe to events",
-      "Type": "String"
     }
   },
 
@@ -45,43 +25,23 @@
           ]
         },
         "Topics": [
-          { "Ref": "Mp4CreatedTopic" },
+          { "Ref": "VideoCreatedTopic" },
           { "Ref": "MetaCreatedTopic" }
         ]
       }
     },
 
-    "Mp4CreatedTopic": {
+    "VideoCreatedTopic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
-        "DisplayName" : "Mp4CreatedTopic",
-        "Subscription": [
-          {
-            "Endpoint": { "Ref": "PostersLambdaArn" },
-            "Protocol": "lambda"
-          },
-          {
-            "Endpoint": { "Ref": "StrmLambdaArn" },
-            "Protocol": "lambda"
-          },
-          {
-            "Endpoint": { "Ref": "OmdbLambdaArn" },
-            "Protocol": "lambda"
-          }
-        ]
+        "DisplayName" : "VideoCreatedTopic"
       }
     },
 
     "MetaCreatedTopic": {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
-        "DisplayName" : "MetaCreatedTopic",
-        "Subscription": [
-          {
-            "Endpoint": { "Ref": "NfoLambdaArn" },
-            "Protocol": "lambda"
-          }
-        ]
+        "DisplayName" : "MetaCreatedTopic"
       }
     },
 
@@ -93,7 +53,7 @@
         "NotificationConfiguration": {
           "TopicConfigurations": [
             {
-              "Topic": { "Ref": "Mp4CreatedTopic" },
+              "Topic": { "Ref": "VideoCreatedTopic" },
               "Event": "s3:ObjectCreated:*",
               "Filter": {
                 "S3Key": {
@@ -127,12 +87,14 @@
       "Export": { "Name": "s3strm-movies-bucket" }
     },
 
-    "Mp4CreatedTopic": {
-      "Value": { "Ref": "Mp4CreatedTopic" }
+    "VideoCreatedTopic": {
+      "Value": { "Ref": "VideoCreatedTopic" },
+      "Export": { "Name": "s3strm-video-created-topic" }
     },
 
     "MetaCreatedTopic": {
-      "Value": { "Ref": "MetaCreatedTopic" }
+      "Value": { "Ref": "MetaCreatedTopic" },
+      "Export": { "Name": "s3strm-meta-created-topic" }
     }
   }
 }
