@@ -3,7 +3,7 @@
   "Description":"Bucket holding movie data",
 
   "Parameters": {
-    "MovieBucketName": {
+    "BucketName": {
       "Description": "Bucket to store the processed movies",
       "Type": "String"
     }
@@ -49,7 +49,7 @@
       "Type" : "AWS::S3::Bucket",
       "Properties" : {
         "AccessControl" : "Private",
-        "BucketName" : { "Ref": "MovieBucketName" },
+        "BucketName" : { "Ref": "BucketName" },
         "NotificationConfiguration": {
           "TopicConfigurations": [
             {
