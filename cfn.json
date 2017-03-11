@@ -82,11 +82,6 @@
   },
 
   "Outputs": {
-    "MovieBucket": {
-      "Value": { "Ref": "MovieBucketName" },
-      "Export": { "Name": "s3strm-movies-bucket" }
-    },
-
     "VideoCreatedTopic": {
       "Value": { "Ref": "VideoCreatedTopic" },
       "Export": { "Name": "s3strm-video-created-topic" }
