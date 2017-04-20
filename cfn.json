@@ -84,6 +84,28 @@
                   ]
                 }
               }
+            },
+            {
+              "Topic": { "Ref": "MetaCreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/poster-custom.jpg" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "MetaCreatedTopic" },
+              "Event": "s3:ObjectRemoved:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/poster-custom.jpg" }
+                  ]
+                }
+              }
             }
           ]
         }
