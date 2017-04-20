@@ -69,7 +69,18 @@
               "Filter": {
                 "S3Key": {
                   "Rules" : [
-                    { "Name": "suffix", "Value": "/metadata.txt" }
+                    { "Name": "suffix", "Value": "/omdb.json" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "MetaCreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "/ffprobe.txt" }
                   ]
                 }
               }
