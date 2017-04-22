@@ -25,8 +25,9 @@
           ]
         },
         "Topics": [
-          { "Ref": "VideoCreatedTopic" },
-          { "Ref": "MetaCreatedTopic" }
+          { "Ref": "MetaCreatedTopic" },
+          { "Ref": "PosterCreatedTopic" },
+          { "Ref": "VideoCreatedTopic" }
         ]
       }
     },
@@ -35,6 +36,13 @@
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
         "DisplayName" : "VideoCreatedTopic"
+      }
+    },
+
+    "PosterCreatedTopic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "PosterCreatedTopic"
       }
     },
 
@@ -64,6 +72,39 @@
               }
             },
             {
+              "Topic": { "Ref": "PosterCreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "poster-custom.jpg" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "PosterCreatedTopic" },
+              "Event": "s3:ObjectCreated:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "poster-omdb.jpg" }
+                  ]
+                }
+              }
+            },
+            {
+              "Topic": { "Ref": "PosterCreatedTopic" },
+              "Event": "s3:ObjectRemoved:*",
+              "Filter": {
+                "S3Key": {
+                  "Rules" : [
+                    { "Name": "suffix", "Value": "poster-custom.jpg" }
+                  ]
+                }
+              }
+            },
+            {
               "Topic": { "Ref": "MetaCreatedTopic" },
               "Event": "s3:ObjectCreated:*",
               "Filter": {
@@ -84,28 +125,6 @@
                   ]
                 }
               }
-            },
-            {
-              "Topic": { "Ref": "MetaCreatedTopic" },
-              "Event": "s3:ObjectCreated:*",
-              "Filter": {
-                "S3Key": {
-                  "Rules" : [
-                    { "Name": "suffix", "Value": "/poster-custom.jpg" }
-                  ]
-                }
-              }
-            },
-            {
-              "Topic": { "Ref": "MetaCreatedTopic" },
-              "Event": "s3:ObjectRemoved:*",
-              "Filter": {
-                "S3Key": {
-                  "Rules" : [
-                    { "Name": "suffix", "Value": "/poster-custom.jpg" }
-                  ]
-                }
-              }
             }
           ]
         }
@@ -118,6 +137,11 @@
     "VideoCreatedTopic": {
       "Value": { "Ref": "VideoCreatedTopic" },
       "Export": { "Name": "s3strm-video-created-topic" }
+    },
+
+    "PosterCreatedTopic": {
+      "Value": { "Ref": "PosterCreatedTopic" },
+      "Export": { "Name": "s3strm-poster-created-topic" }
     },
 
     "MetaCreatedTopic": {
